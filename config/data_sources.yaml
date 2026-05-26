@@ -1,0 +1,103 @@
+foundation:
+  - id: igio_parcels_current
+    name: IGIO Parcel Boundaries Current
+    tier: official
+    url: https://gisdata.in.gov/server/rest/services/Hosted/Parcel_Boundaries_of_Indiana_Current/FeatureServer
+    fields: [geometry, state_parcel_id, acreage, owner, assessed_value, county, township]
+    refresh: annual
+    priority: P0
+  - id: igio_parcels_2025
+    name: IGIO Parcel Boundaries 2025
+    tier: official
+    url: https://gisdata.in.gov/server/rest/services/Hosted/Parcel_Boundaries_of_Indiana_2025/FeatureServer/0
+    fields: [geometry, state_parcel_id, tax_county, tax_township]
+    refresh: annual
+    priority: P0
+  - id: regrid_parcels_zoning
+    name: Regrid Indiana Parcels + Standardized Zoning
+    tier: paid
+    url: https://app.regrid.com/store/esri/us/in
+    fields: [zoning, owner, mailing_address, land_use]
+    refresh: daily
+    priority: P1
+
+infrastructure:
+  - id: iurc_service_territories
+    name: IURC Electric Service Territories
+    tier: official
+    url: https://www.in.gov/iurc/energy-division/electricity-industry/
+    fields: [utility_name, territory_geometry]
+    priority: P0
+  - id: hifld_transmission
+    name: HIFLD Electric Transmission Lines
+    tier: official
+    url: https://hifld-geoplatform.opendata.arcgis.com/
+    fields: [voltage_kv, owner, geometry]
+    priority: P0
+  - id: hifld_substations
+    name: HIFLD Substations
+    tier: official
+    url: https://hifld-geoplatform.opendata.arcgis.com/
+    fields: [name, voltage, geometry]
+    priority: P0
+  - id: indot_roads
+    name: INDOT Road Network / AADT
+    tier: official
+    url: https://gis.indot.in.gov/
+    fields: [road_class, aadt, geometry]
+    priority: P1
+  - id: miso_generator_queue
+    name: MISO Generator Interconnection Queue
+    tier: official
+    url: https://www.misoenergy.org/planning/resource-utilization/GI_Queue/
+    fields: [poi, mw, fuel, status]
+    priority: P1
+
+constraints:
+  - id: fema_flood
+    name: FEMA NFHL Flood Zones
+    tier: official
+    priority: P0
+  - id: nwi_wetlands
+    name: National Wetlands Inventory
+    tier: official
+    priority: P0
+  - id: ssurgo_soils
+    name: USDA SSURGO / Hydric Soils
+    tier: official
+    priority: P1
+  - id: county_zoning
+    name: County / Municipal Zoning
+    tier: local
+    priority: P0
+    note: No single statewide layer; county adapters required
+
+signals:
+  - id: iurc_dockets
+    name: IURC Large-Load / HEA 1007 Filings
+    tier: official
+    url: https://iurc.portal.in.gov/
+    priority: P0
+  - id: iedc_incentives
+    name: IEDC Data Center / Investment Incentives
+    tier: official
+    url: https://iedc.in.gov/
+    priority: P1
+  - id: county_meeting_minutes
+    name: County / City / Utility Board Agendas
+    tier: proprietary_pipeline
+    priority: P0
+  - id: broker_owner_intel
+    name: Broker / Owner / Farmer Conversations
+    tier: proprietary
+    priority: P0
+
+market:
+  - id: county_assessor_sales
+    name: County Assessor Sales / Deed History
+    tier: local
+    priority: P1
+  - id: mls_listings
+    name: MLS / Broker Listings
+    tier: paid
+    priority: P2

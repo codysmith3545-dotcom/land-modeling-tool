@@ -1,0 +1,72 @@
+[
+  {
+    "node_id": "node-lake-miso-345",
+    "node_type": "transmission_substation",
+    "name": "Lake County 345kV corridor",
+    "county": "Lake",
+    "lat": 41.55,
+    "lon": -87.35,
+    "scarcity": 0.85,
+    "capacity_proxy": 0.72,
+    "upgrade_momentum": 0.80,
+    "political_receptivity": 0.65,
+    "buyer_universe": 0.90,
+    "time_advantage": 0.70
+  },
+  {
+    "node_id": "node-hamilton-duke",
+    "node_type": "utility_substation",
+    "name": "Hamilton County Duke growth node",
+    "county": "Hamilton",
+    "lat": 40.05,
+    "lon": -86.05,
+    "scarcity": 0.78,
+    "capacity_proxy": 0.68,
+    "upgrade_momentum": 0.75,
+    "political_receptivity": 0.72,
+    "buyer_universe": 0.82,
+    "time_advantage": 0.65
+  },
+  {
+    "node_id": "node-hendricks-logistics",
+    "node_type": "logistics_corridor",
+    "name": "I-70 Plainfield logistics belt",
+    "county": "Hendricks",
+    "lat": 39.68,
+    "lon": -86.40,
+    "scarcity": 0.55,
+    "capacity_proxy": 0.60,
+    "upgrade_momentum": 0.50,
+    "political_receptivity": 0.80,
+    "buyer_universe": 0.75,
+    "time_advantage": 0.45
+  },
+  {
+    "node_id": "node-clark-river-ridge",
+    "node_type": "industrial_park",
+    "name": "River Ridge Commerce Center fringe",
+    "county": "Clark",
+    "lat": 38.35,
+    "lon": -85.75,
+    "scarcity": 0.40,
+    "capacity_proxy": 0.55,
+    "upgrade_momentum": 0.45,
+    "political_receptivity": 0.85,
+    "buyer_universe": 0.70,
+    "time_advantage": 0.30
+  },
+  {
+    "node_id": "node-fayette-aes",
+    "node_type": "transmission_substation",
+    "name": "Fayette County AES 138kV node",
+    "county": "Fayette",
+    "lat": 39.65,
+    "lon": -85.18,
+    "scarcity": 0.70,
+    "capacity_proxy": 0.62,
+    "upgrade_momentum": 0.55,
+    "political_receptivity": 0.60,
+    "buyer_universe": 0.65,
+    "time_advantage": 0.55
+  }
+]

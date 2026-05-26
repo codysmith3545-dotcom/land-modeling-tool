@@ -1,0 +1,22 @@
+# Composite score weights and category priority multipliers.
+# Priority 1 categories get a boost when selecting "investment category" vs raw fit max.
+
+composite:
+  node_score: 0.22
+  fit_peak: 0.28
+  power_100_300: 0.14
+  water: 0.10
+  entitlement: 0.10
+  acquisition: 0.10
+  fatal_penalty: 0.20
+
+category_priority_multiplier:
+  "1": 1.15
+  "2": 1.0
+  "3": 0.92
+
+assemblage:
+  min_parcels: 2
+  max_owners: 12
+  same_node_required: true
+  owner_match: true

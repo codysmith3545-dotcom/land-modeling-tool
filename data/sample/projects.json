@@ -1,0 +1,41 @@
+[
+  {
+    "project_id": "proj-meta-lake-dc",
+    "name": "Lake County hyperscale campus (sample)",
+    "category": "data_center",
+    "county": "Lake",
+    "parcel_ids": ["IN-LAKE-001", "IN-LAKE-002"],
+    "land_acquisition_date": "2019-06-01",
+    "first_public_signal_date": "2021-03-15",
+    "announcement_date": "2021-09-01",
+    "construction_start_date": "2022-04-01"
+  },
+  {
+    "project_id": "proj-hamilton-industrial",
+    "name": "Hamilton power-heavy industrial (sample)",
+    "category": "power_heavy_industrial",
+    "county": "Hamilton",
+    "parcel_ids": ["IN-HAM-003"],
+    "first_public_signal_date": "2020-11-01",
+    "rezoning_or_permit_date": "2021-02-01",
+    "construction_start_date": "2022-01-15"
+  },
+  {
+    "project_id": "proj-hendricks-logistics",
+    "name": "Plainfield logistics hub (sample)",
+    "category": "logistics",
+    "county": "Hendricks",
+    "parcel_ids": ["IN-HEN-004"],
+    "first_public_signal_date": "2019-08-20",
+    "announcement_date": "2020-01-10"
+  },
+  {
+    "project_id": "proj-fayette-solar",
+    "name": "Fayette solar + BESS (sample)",
+    "category": "bess_solar_energy",
+    "county": "Fayette",
+    "parcel_ids": ["IN-FAY-010"],
+    "first_public_signal_date": "2021-06-01",
+    "announcement_date": "2022-01-01"
+  }
+]

@@ -1,0 +1,48 @@
+# Proprietary signal types — each maps to a scoring boost when detected before public signal.
+# Sources are human + public-meeting pipelines; boosts are applied in signal scoring layer.
+
+signal_types:
+  - id: iurc_large_load_petition
+    name: IURC large-load / HEA 1007 filing near node
+    categories: [data_center, power_heavy_industrial]
+    boost: 0.12
+    lead_time_months: [6, 24]
+  - id: miso_queue_poi
+    name: MISO generator/interconnection queue POI within 3 mi
+    categories: [data_center, bess_solar_energy, power_heavy_industrial]
+    boost: 0.10
+    lead_time_months: [12, 36]
+  - id: substation_expansion_permit
+    name: Utility substation or transmission upgrade filing
+    categories: [data_center, power_heavy_industrial]
+    boost: 0.15
+    lead_time_months: [6, 18]
+  - id: rezoning_pre_meeting
+    name: Rezoning or comp-plan amendment pre-meeting mention
+    categories: [data_center, logistics, manufacturing, residential_growth]
+    boost: 0.08
+    lead_time_months: [3, 12]
+  - id: annexation_petition
+    name: Annexation petition or growth-area expansion
+    categories: [data_center, logistics, residential_growth]
+    boost: 0.07
+    lead_time_months: [6, 18]
+  - id: sewer_extension_study
+    name: Sewer/water extension or WWTP capacity study
+    categories: [data_center, logistics, manufacturing, residential_growth]
+    boost: 0.06
+    lead_time_months: [6, 24]
+  - id: broker_off_market_chatter
+    name: Off-market broker or owner outreach signal
+    categories: [data_center, power_heavy_industrial, logistics]
+    boost: 0.05
+    lead_time_months: [0, 6]
+  - id: geotech_survey_activity
+    name: Geotech borings or survey stakes on adjacent land
+    categories: [data_center, power_heavy_industrial, logistics]
+    boost: 0.09
+    lead_time_months: [3, 12]
+
+scoring:
+  max_total_boost: 0.25
+  hiddenness_penalty_if_priced: 0.15

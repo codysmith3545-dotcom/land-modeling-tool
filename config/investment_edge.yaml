@@ -1,0 +1,69 @@
+geography:
+  primary_market: Indiana
+  expansion_markets: [Ohio, Michigan, Illinois, Kentucky]
+
+investment_thesis:
+  name: infrastructure_option_desk
+  summary: >
+    Quietly identify and control land where scarce power, water, logistics,
+    entitlement path, and timing create option value before public signals price it in.
+  primary_edge: infrastructure_constrained_development_land
+  control_preference:
+    - option
+    - assignable_purchase_agreement
+    - phased_assemblage
+    - rofr
+    - ground_lease
+    - outright_purchase
+
+development_categories:
+  - id: data_center
+    priority: 1
+    min_acres: 100
+    ideal_acres: [100, 300, 1000]
+  - id: power_heavy_industrial
+    priority: 1
+    min_acres: 50
+    ideal_acres: [50, 300]
+  - id: logistics
+    priority: 2
+    min_acres: 20
+    ideal_acres: [20, 200]
+  - id: manufacturing
+    priority: 2
+    min_acres: 20
+    ideal_acres: [20, 500]
+  - id: residential_growth
+    priority: 3
+    min_acres: 5
+    ideal_acres: [5, 100]
+  - id: bess_solar_energy
+    priority: 3
+    min_acres: 40
+    ideal_acres: [40, 2000]
+
+acreage_tiers:
+  general: 20
+  enterprise_edge: 50
+  large_campus: 100
+  hyperscale_mega: 300
+
+acquisition:
+  target_hold_years: [3, 7]
+  max_assemblage_owners: 12
+  hiddenness_required_for_top_rank: true
+  exit_buyers:
+    - hyperscaler
+    - utility
+    - industrial_user
+    - logistics_developer
+    - homebuilder
+    - solar_bess_developer
+    - municipality
+    - infrastructure_fund
+
+kill_criteria:
+  min_actionable_from_first_10_memos: 3
+  max_power_expert_rejection_rate: 0.70
+  min_historical_winners_in_top_100: 0.20
+  pivot_if_known_market_pct: 0.50
