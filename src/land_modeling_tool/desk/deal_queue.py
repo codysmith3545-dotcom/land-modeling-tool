@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from land_modeling_tool.config import load_yaml
+from land_modeling_tool.desk.legal_control import LegalControlScore
 from land_modeling_tool.desk.thesis_matrix import build_thesis_matrix
 from land_modeling_tool.desk.types import DealQueueItem
 from land_modeling_tool.models.types import ParcelRecord
@@ -10,8 +11,20 @@ def _desk_config() -> dict:
     return load_yaml("desk.yaml")
 
 
-def _next_action(parcel: ParcelRecord, primary_thesis: str) -> tuple[str, str, str]:
+def _next_action(
+    parcel: ParcelRecord,
+    primary_thesis: str,
+    legal_control: LegalControlScore | None = None,
+) -> tuple[str, str, str]:
     """Return (next_action, why, fastest_kill_test)."""
+    if legal_control and legal_control.hard_blockers:
+        blocker = legal_control.hard_blockers[0]
+        return (
+            "reject",
+            f"Legal hard blocker: {blocker}",
+            "Resolve blocker via legal diligence before any owner outreach",
+        )
+
     if parcel.buy_action == "pass" or parcel.fatal.blockers:
         blocker = parcel.fatal.blockers[0] if parcel.fatal.blockers else "low buy score"
         return (
@@ -77,14 +90,20 @@ def _next_action(parcel: ParcelRecord, primary_thesis: str) -> tuple[str, str, s
     )
 
 
-def build_deal_queue(parcels: list[ParcelRecord], limit: int = 25) -> list[DealQueueItem]:
+def build_deal_queue(
+    parcels: list[ParcelRecord],
+    limit: int = 25,
+    legal_control: dict[str, LegalControlScore] | None = None,
+    control_strategy: dict[str, str] | None = None,
+) -> list[DealQueueItem]:
     actionable = [p for p in parcels if p.buy_action in {"pursue_now", "diligence", "watch"}]
     actionable.sort(key=lambda p: p.buy_score, reverse=True)
 
     items: list[DealQueueItem] = []
     for priority, parcel in enumerate(actionable[:limit], start=1):
         matrix = build_thesis_matrix(parcel)
-        action, why, kill = _next_action(parcel, matrix.primary_thesis)
+        legal = (legal_control or {}).get(parcel.parcel_id)
+        action, why, kill = _next_action(parcel, matrix.primary_thesis, legal)
         items.append(
             DealQueueItem(
                 parcel_id=parcel.parcel_id,
@@ -96,6 +115,9 @@ def build_deal_queue(parcels: list[ParcelRecord], limit: int = 25) -> list[DealQ
                 fastest_kill_test=kill,
                 buy_action=parcel.buy_action,
                 buy_score=parcel.buy_score,
+                legal_control_score=legal.legal_control_score if legal else 0.0,
+                legal_hard_blockers=list(legal.hard_blockers) if legal else [],
+                recommended_control=(control_strategy or {}).get(parcel.parcel_id, ""),
                 priority=priority,
             )
         )

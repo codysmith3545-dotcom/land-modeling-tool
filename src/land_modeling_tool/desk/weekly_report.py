@@ -52,7 +52,14 @@ def build_weekly_desk_report(
             f"### {parcel.parcel_id} — {parcel.county} ({parcel.acreage:.0f} ac)",
             f"- **Thesis:** {matrix.primary_thesis} (backup: {matrix.backup_thesis})",
             f"- **Why now:** {matrix.why_now}",
-            f"- **Max basis:** ${math.max_basis_per_acre:,.0f}/ac | **Verdict:** {math.verdict}",
+            f"- **Scenario bands:** downside ${math.downside_value_per_acre:,.0f}/ac | "
+            f"base ${math.base_value_per_acre:,.0f}/ac | upside ${math.upside_value_per_acre:,.0f}/ac",
+            f"- **Max basis:** ${math.max_basis_per_acre:,.0f}/ac | **Strike:** ${math.recommended_strike_price:,.0f}/ac | "
+            f"**Recommended control:** {math.recommended_control}",
+            f"- **Verdict:** {math.verdict} | **Probability:** {math.probability_bucket} | "
+            f"**Capital at risk:** ${math.capital_at_risk:,.0f} | **Do not exceed:** ${math.do_not_exceed_price:,.0f}",
+            f"- **Payoff band:** {math.expected_payoff_band} | **Drop-dead:** {math.drop_dead_date or 'n/a'}",
+            f"- **Exercise trigger:** {math.exercise_or_assign_trigger}",
             f"- **Fastest kill test:** {kill}",
             "",
         ])

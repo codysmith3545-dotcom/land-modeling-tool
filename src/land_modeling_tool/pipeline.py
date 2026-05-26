@@ -11,9 +11,12 @@ from land_modeling_tool.config import OUTPUT_DIR, investment_edge, prioritized_s
 from land_modeling_tool.data.candidate_intake import load_all_parcels
 from land_modeling_tool.data.loaders import load_hard_negatives, load_nodes, load_projects
 from land_modeling_tool.desk.call_sheets import build_call_sheets
+from land_modeling_tool.desk.control_strategy import compute_all_control_strategies
 from land_modeling_tool.desk.deal_math import compute_all_deal_math
 from land_modeling_tool.desk.deal_queue import build_deal_queue
+from land_modeling_tool.desk.fatal_gates import build_fatal_gate_detail
 from land_modeling_tool.desk.feedback import rejection_summary
+from land_modeling_tool.desk.legal_control import compute_all_legal_control
 from land_modeling_tool.desk.thesis_matrix import build_all_thesis_matrices
 from land_modeling_tool.desk.weekly_report import build_weekly_desk_report
 from land_modeling_tool.export.geojson import build_geojson, write_geojson
@@ -78,17 +81,12 @@ def run_pipeline(output_dir: Path | None = None) -> dict:
     _write_json(out / "ranked_assemblages.json", [asdict(a) for a in assemblages])
     _write_json(out / "top_100_shortlist.json", [_parcel_dict(p, priority_map) for p in shortlist])
     _write_json(out / "evidence_packs.json", evidence_packs)
+    _write_json(out / "fatal_gate_detail.json", build_fatal_gate_detail(parcels))
     _write_json(out / "backtest_metrics.json", asdict(metrics))
     _write_json(out / "parcel_time_snapshots.json", [asdict(s) for s in snapshots])
     _write_json(out / "temporal_feature_store.json", [asdict(f) for f in store.features])
     write_geojson(out / "map.geojson", geojson)
     write_interactive_map(out / "map.html", geojson)
-
-    memos_dir = out / "diligence_memos"
-    memos_dir.mkdir(exist_ok=True)
-    for parcel in shortlist[:10]:
-        memo_path = memos_dir / f"{parcel.parcel_id}.md"
-        memo_path.write_text(render_memo(parcel), encoding="utf-8")
 
     (out / "development_atlas_report.md").write_text(
         _atlas_markdown(atlas),
@@ -102,14 +100,41 @@ def run_pipeline(output_dir: Path | None = None) -> dict:
     )
 
     thesis = build_all_thesis_matrices(parcels)
-    queue = build_deal_queue(parcels)
+    thesis_map = {t.parcel_id: t for t in thesis}
     deal_math = compute_all_deal_math(parcels)
+    deal_math_map = {d.parcel_id: d for d in deal_math}
+    legal_control = compute_all_legal_control(parcels)
+    legal_control_map = {l.parcel_id: l for l in legal_control}
+    control_strategy = compute_all_control_strategies(
+        parcels,
+        legal_scores=legal_control_map,
+        deal_math_map=deal_math_map,
+        thesis_map=thesis_map,
+    )
+    control_strategy_map = {c.parcel_id: c.recommended_control for c in control_strategy}
+    queue = build_deal_queue(
+        parcels,
+        legal_control=legal_control_map,
+        control_strategy=control_strategy_map,
+    )
     call_sheets = build_call_sheets([p for p in parcels if p.parcel_id in {q.parcel_id for q in queue[:10]}])
 
     _write_json(out / "parcel_thesis_matrix.json", [m.to_dict() for m in thesis])
     _write_json(out / "deal_queue.json", [q.to_dict() for q in queue])
     _write_json(out / "deal_math.json", [d.to_dict() for d in deal_math])
+    _write_json(out / "legal_control.json", [l.to_dict() for l in legal_control])
+    _write_json(out / "control_strategy.json", [c.to_dict() for c in control_strategy])
     _write_json(out / "expert_rejection_summary.json", rejection_summary())
+
+    memos_dir = out / "diligence_memos"
+    memos_dir.mkdir(exist_ok=True)
+    memo_ids = {item.parcel_id for item in queue[:10]}
+    memo_parcels = [p for p in parcels if p.parcel_id in memo_ids]
+    if not memo_parcels:
+        memo_parcels = shortlist[:10]
+    for parcel in memo_parcels:
+        memo_path = memos_dir / f"{parcel.parcel_id}.md"
+        memo_path.write_text(render_memo(parcel), encoding="utf-8")
 
     sheets_dir = out / "call_sheets"
     sheets_dir.mkdir(exist_ok=True)

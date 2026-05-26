@@ -15,6 +15,13 @@ def render_owner_call_sheet(parcel: ParcelRecord) -> str:
         f"**County:** {parcel.county} | **Acreage:** {parcel.acreage:.1f} ac",
         f"**Primary thesis:** {matrix.primary_thesis.replace('_', ' ')}",
         f"**Max basis:** ${math.max_basis_per_acre:,.0f}/ac | **Max option premium:** ${math.max_option_premium_per_acre:,.0f}/ac",
+        f"**Recommended control structure:** {math.recommended_control}",
+        f"**Strike guidance:** ${math.recommended_strike_price:,.0f}/ac | **Do not exceed:** ${math.do_not_exceed_price:,.0f}",
+        f"**Scenario bands:** downside ${math.downside_value_per_acre:,.0f}/ac | "
+        f"base ${math.base_value_per_acre:,.0f}/ac | upside ${math.upside_value_per_acre:,.0f}/ac",
+        f"**Probability:** {math.probability_bucket} | **Holding period:** {math.holding_period_months} mo | "
+        f"**Capital at risk:** ${math.capital_at_risk:,.0f}",
+        f"**Exercise / assign trigger:** {math.exercise_or_assign_trigger}",
         "",
         "## Opening frame",
         "- We buy land for long-term development partnerships, not flips.",

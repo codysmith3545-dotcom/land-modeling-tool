@@ -49,6 +49,11 @@ class ConfidenceBand(str, Enum):
     LOW = "low"
 
 
+class GateSeverity(str, Enum):
+    HARD = "hard"
+    SOFT = "soft"
+
+
 @dataclass
 class FitScores:
     data_center: float = 0.0
@@ -111,6 +116,7 @@ class GateResult:
     gate_id: str
     passed: bool
     notes: str = ""
+    severity: GateSeverity = GateSeverity.HARD
 
 
 @dataclass
@@ -118,10 +124,19 @@ class FatalFlawReport:
     score: float
     gates: list[GateResult] = field(default_factory=list)
     blockers: list[str] = field(default_factory=list)
+    soft_risks: list[str] = field(default_factory=list)
 
     @property
     def passed_all(self) -> bool:
-        return all(g.passed for g in self.gates) and not self.blockers
+        return self.hard_fail_count == 0 and not self.blockers
+
+    @property
+    def hard_fail_count(self) -> int:
+        return sum(1 for g in self.gates if g.severity == GateSeverity.HARD and not g.passed)
+
+    @property
+    def soft_fail_count(self) -> int:
+        return sum(1 for g in self.gates if g.severity == GateSeverity.SOFT and not g.passed)
 
 
 @dataclass

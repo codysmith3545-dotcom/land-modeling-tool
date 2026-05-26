@@ -53,6 +53,9 @@ class DealQueueItem:
     fastest_kill_test: str
     buy_action: str
     buy_score: float
+    legal_control_score: float = 0.0
+    legal_hard_blockers: list[str] = field(default_factory=list)
+    recommended_control: str = ""
     priority: int = 0
 
     def to_dict(self) -> dict[str, Any]:
@@ -66,6 +69,9 @@ class DealQueueItem:
             "fastest_kill_test": self.fastest_kill_test,
             "buy_action": self.buy_action,
             "buy_score": round(self.buy_score, 3),
+            "legal_control_score": round(self.legal_control_score, 3),
+            "legal_hard_blockers": self.legal_hard_blockers,
+            "recommended_control": self.recommended_control,
             "priority": self.priority,
         }
 
@@ -79,6 +85,21 @@ class DealMathResult:
     downside_per_acre: float
     max_basis_per_acre: float
     max_option_premium_per_acre: float
+    downside_value: float
+    downside_value_per_acre: float
+    base_value: float
+    base_value_per_acre: float
+    upside_value: float
+    upside_value_per_acre: float
+    recommended_strike_price: float
+    expected_payoff_band: str
+    capital_at_risk: float
+    do_not_exceed_price: float
+    probability_bucket: str
+    holding_period_months: int
+    diligence_cost_estimate: float
+    drop_dead_date: str | None
+    exercise_or_assign_trigger: str
     recommended_control: str
     verdict: str
     upside_case: str
@@ -94,6 +115,21 @@ class DealMathResult:
             "downside_per_acre": round(self.downside_per_acre, 0),
             "max_basis_per_acre": round(self.max_basis_per_acre, 0),
             "max_option_premium_per_acre": round(self.max_option_premium_per_acre, 0),
+            "downside_value": round(self.downside_value, 0),
+            "downside_value_per_acre": round(self.downside_value_per_acre, 0),
+            "base_value": round(self.base_value, 0),
+            "base_value_per_acre": round(self.base_value_per_acre, 0),
+            "upside_value": round(self.upside_value, 0),
+            "upside_value_per_acre": round(self.upside_value_per_acre, 0),
+            "recommended_strike_price": round(self.recommended_strike_price, 0),
+            "expected_payoff_band": self.expected_payoff_band,
+            "capital_at_risk": round(self.capital_at_risk, 0),
+            "do_not_exceed_price": round(self.do_not_exceed_price, 0),
+            "probability_bucket": self.probability_bucket,
+            "holding_period_months": self.holding_period_months,
+            "diligence_cost_estimate": round(self.diligence_cost_estimate, 0),
+            "drop_dead_date": self.drop_dead_date,
+            "exercise_or_assign_trigger": self.exercise_or_assign_trigger,
             "recommended_control": self.recommended_control,
             "verdict": self.verdict,
             "upside_case": self.upside_case,

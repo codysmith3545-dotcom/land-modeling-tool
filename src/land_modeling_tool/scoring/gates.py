@@ -1,10 +1,9 @@
 from __future__ import annotations
 
+from land_modeling_tool.desk.fatal_gates import evaluate_fatal_flaws
 from land_modeling_tool.models.types import (
     ConfidenceBand,
     ControlMethod,
-    FatalFlawReport,
-    GateResult,
     Hiddenness,
     ParcelRecord,
 )
@@ -13,51 +12,6 @@ from land_modeling_tool.config import investment_edge, scoring_weights
 from land_modeling_tool.scoring.buy_score import compute_buy_score
 from land_modeling_tool.scoring.parcels import entitlement_path_score, score_fit, score_power_readiness, score_water_fit
 from land_modeling_tool.scoring.signals import detect_signals, signal_boost
-
-
-def evaluate_fatal_flaws(parcel: ParcelRecord) -> FatalFlawReport:
-    gates: list[GateResult] = []
-    blockers: list[str] = []
-
-    jurisdiction_ok = bool(parcel.county and parcel.zoning)
-    gates.append(GateResult("jurisdiction", jurisdiction_ok, "County and zoning identified"))
-
-    utility_ok = parcel.power.substation_miles <= 8 and parcel.sewer_miles <= 10
-    if parcel.power.substation_miles > 8:
-        blockers.append("electric_service_too_distant")
-    if parcel.sewer_miles > 10:
-        blockers.append("sewer_extension_unlikely")
-    gates.append(GateResult("utility", utility_ok, "Electric and sewer path plausible"))
-
-    drainage_ok = parcel.floodway_pct < 0.25 and parcel.wetland_pct < 0.40
-    if parcel.floodway_pct >= 0.25:
-        blockers.append("floodway_exposure")
-    if parcel.wetland_pct >= 0.40:
-        blockers.append("wetland_bottleneck")
-    gates.append(GateResult("drainage", drainage_ok, "Drainage and wetlands reviewed"))
-
-    access_ok = parcel.frontage_ft >= 100
-    if not access_ok:
-        blockers.append("insufficient_road_frontage")
-    gates.append(GateResult("access", access_ok, "Legal frontage and access plausible"))
-
-    env_ok = parcel.wetland_pct < 0.60
-    gates.append(GateResult("environmental", env_ok, "No obvious environmental stop"))
-
-    title_ok = parcel.owner_count <= 12
-    if not title_ok:
-        blockers.append("assemblage_too_fragmented")
-    gates.append(GateResult("title", title_ok, "Ownership/assemblage manageable"))
-
-    politics_ok = not parcel.industrial_park or parcel.listed is False
-    gates.append(GateResult("politics", politics_ok, "Political/market posture acceptable"))
-
-    exit_ok = parcel.acreage >= 20
-    gates.append(GateResult("exit", exit_ok, "Credible buyer/user path exists"))
-
-    penalty = min(1.0, len(blockers) * 0.18)
-    score = max(0.0, 1.0 - penalty)
-    return FatalFlawReport(score=score, gates=gates, blockers=blockers)
 
 
 def score_acquisition(parcel: ParcelRecord, fit_peak: float) -> None:

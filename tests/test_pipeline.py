@@ -5,7 +5,7 @@ from datetime import date
 from land_modeling_tool.backtest.labels import build_snapshots, leakage_safe_filter, run_backtest
 from land_modeling_tool.config import investment_edge, prioritized_sources
 from land_modeling_tool.data.loaders import load_nodes, load_parcels, load_projects
-from land_modeling_tool.models.types import DevelopmentCategory, DevelopmentEvent
+from land_modeling_tool.models.types import DevelopmentCategory, DevelopmentEvent, GateSeverity
 from land_modeling_tool.pipeline import run_pipeline
 from land_modeling_tool.scoring.gates import evaluate_fatal_flaws, score_parcel
 from land_modeling_tool.scoring.nodes import rank_nodes, rank_parcels
@@ -38,6 +38,8 @@ def test_fatal_flaws_block_floodway():
     bad = next(p for p in parcels if p.parcel_id == "IN-LAKE-006")
     report = evaluate_fatal_flaws(bad)
     assert "floodway_exposure" in report.blockers
+    assert any(g.severity == GateSeverity.HARD for g in report.gates)
+    assert any(g.severity == GateSeverity.SOFT for g in report.gates)
 
 
 def test_backtest_finds_winners():
@@ -84,6 +86,7 @@ def test_pipeline_runs(tmp_path):
     assert (tmp_path / "map.geojson").exists()
     assert (tmp_path / "ranked_assemblages.json").exists()
     assert (tmp_path / "evidence_packs.json").exists()
+    assert (tmp_path / "fatal_gate_detail.json").exists()
     assert (tmp_path / "ninety_day_proof.md").exists()
     assert (tmp_path / "diligence_memos").is_dir()
 

@@ -24,6 +24,30 @@ deal_math:
     residential_growth: 1.8
   max_option_premium_pct_of_upside: 0.08
   outright_basis_pct_of_upside: 0.35
+  base_value_midpoint_pct: 0.55
+  strike_price_pct_of_max_basis: 0.95
+  probability_thresholds:
+    high: 0.72
+    medium: 0.52
+  option_premium_pct_by_probability:
+    high: 0.10
+    med: 0.08
+    low: 0.06
+  holding_period_months:
+    high: 12
+    med: 18
+    low: 24
+  catalyst_signal_months:
+    high: 6
+    med: 12
+    low: 18
+  diligence_cost_per_acre:
+    high: 450
+    med: 300
+    low: 180
+  control_recommendations:
+    outright_min_spread_ratio: 2.0
+    option_min_spread_ratio: 1.15
 
 queue:
   power_mw_threshold_for_utility_call: 0.55
@@ -36,3 +60,14 @@ queue:
     - check_title
     - watch_only
     - reject
+
+legal_control:
+  hard_blocker_score: 0.35
+  do_not_control_legal_score: 0.45
+
+control_strategy:
+  utility_uncertainty_threshold: 0.55
+  owner_count_phased_threshold: 3
+  outright_legal_score_min: 0.75
+  outright_utility_score_min: 0.70
+  outright_basis_buffer: 0.95
