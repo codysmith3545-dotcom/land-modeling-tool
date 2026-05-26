@@ -1,0 +1,24 @@
+# Unified "should we buy this?" score — ties prediction to acquisition action.
+# Higher = better tract to pursue for control before development is obvious.
+
+components:
+  composite: 0.35
+  acquisition: 0.25
+  profile_match: 0.20
+  hiddenness: 0.12
+  fatal: 0.08
+
+hiddenness_values:
+  hidden: 1.0
+  semi_obvious: 0.55
+  priced: 0.15
+
+priced_in_penalty:
+  listed: 0.25
+  industrial_park: 0.20
+
+action_tiers:
+  pursue_now: 0.72
+  diligence: 0.58
+  watch: 0.45
+  pass: 0.0

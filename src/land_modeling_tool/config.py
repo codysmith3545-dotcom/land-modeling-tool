@@ -33,6 +33,10 @@ def signal_config() -> dict[str, Any]:
     return load_yaml("signals.yaml")
 
 
+def buy_score_config() -> dict[str, Any]:
+    return load_yaml("buy_score.yaml")
+
+
 def prioritized_sources() -> list[dict[str, Any]]:
     registry = data_sources()
     items: list[dict[str, Any]] = []

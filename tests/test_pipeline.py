@@ -76,11 +76,48 @@ def test_pipeline_runs(tmp_path):
     summary = run_pipeline(tmp_path)
     assert summary["parcels"] >= 10
     assert summary.get("assemblages", 0) >= 0
+    assert summary.get("historical_projects", 0) >= 4
     assert (tmp_path / "ranked_parcels.json").exists()
+    assert (tmp_path / "buy_watchlist.json").exists()
+    assert (tmp_path / "development_atlas.json").exists()
+    assert (tmp_path / "map.html").exists()
+    assert (tmp_path / "map.geojson").exists()
     assert (tmp_path / "ranked_assemblages.json").exists()
     assert (tmp_path / "evidence_packs.json").exists()
     assert (tmp_path / "ninety_day_proof.md").exists()
     assert (tmp_path / "diligence_memos").is_dir()
+
+
+def test_development_atlas_builds():
+    from land_modeling_tool.atlas.development_atlas import build_development_atlas
+
+    atlas = build_development_atlas(load_parcels())
+    assert atlas.project_count >= 4
+    assert "data_center" in atlas.by_category
+    assert atlas.winner_profiles
+
+
+def test_buy_score_on_ranked_parcels():
+    from land_modeling_tool.atlas.development_atlas import winner_profiles_for_scoring
+
+    nodes = rank_nodes(load_nodes())
+    profiles = winner_profiles_for_scoring(load_parcels())
+    parcels = rank_parcels(load_parcels(), nodes, profiles)
+    assert parcels[0].buy_score >= parcels[-1].buy_score
+    assert parcels[0].buy_action in {"pursue_now", "diligence", "watch", "pass"}
+
+
+def test_compute_buy_score():
+    from land_modeling_tool.atlas.development_atlas import winner_profiles_for_scoring
+    from land_modeling_tool.scoring.buy_score import compute_buy_score
+
+    nodes = rank_nodes(load_nodes())
+    profiles = winner_profiles_for_scoring(load_parcels())
+    parcels = rank_parcels(load_parcels(), nodes, profiles)
+    top = parcels[0]
+    score, action = compute_buy_score(top, top.profile_match)
+    assert 0 <= score <= 1
+    assert action in {"pursue_now", "diligence", "watch", "pass"}
 
 
 def test_assemblage_groups_same_owner():

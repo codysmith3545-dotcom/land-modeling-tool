@@ -37,5 +37,43 @@
     "parcel_ids": ["IN-FAY-010"],
     "first_public_signal_date": "2021-06-01",
     "announcement_date": "2022-01-01"
+  },
+  {
+    "project_id": "proj-clark-amazon",
+    "name": "Clark County logistics expansion (sample)",
+    "category": "logistics",
+    "county": "Clark",
+    "parcel_ids": ["IN-CLARK-005"],
+    "first_public_signal_date": "2018-05-01",
+    "announcement_date": "2019-02-01",
+    "construction_start_date": "2019-09-01"
+  },
+  {
+    "project_id": "proj-lake-manufacturing",
+    "name": "Lake County advanced manufacturing (sample)",
+    "category": "manufacturing",
+    "county": "Lake",
+    "parcel_ids": ["IN-LAKE-007"],
+    "first_public_signal_date": "2020-04-01",
+    "rezoning_or_permit_date": "2020-11-01"
+  },
+  {
+    "project_id": "proj-hamilton-residential",
+    "name": "Hamilton growth corridor residential (sample)",
+    "category": "residential_growth",
+    "county": "Hamilton",
+    "parcel_ids": ["IN-HAM-014"],
+    "first_public_signal_date": "2019-01-15",
+    "announcement_date": "2019-08-01"
+  },
+  {
+    "project_id": "proj-lake-edge-dc",
+    "name": "Lake edge data center land play (sample)",
+    "category": "data_center",
+    "county": "Lake",
+    "parcel_ids": ["IN-LAKE-007"],
+    "land_acquisition_date": "2018-09-01",
+    "first_public_signal_date": "2020-06-01",
+    "announcement_date": "2021-01-01"
   }
 ]

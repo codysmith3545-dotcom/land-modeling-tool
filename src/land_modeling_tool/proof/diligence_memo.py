@@ -19,6 +19,8 @@ def render_memo(parcel: ParcelRecord) -> str:
 - Owner: {parcel.owner}
 - Best fit: {best_cat} ({fit:.2f})
 - Composite score: {parcel.composite_score:.2f}
+- Buy score: {parcel.buy_score:.2f} ({parcel.buy_action})
+- Profile match (historical winners): {parcel.profile_match:.2f}
 - Confidence: {parcel.confidence.value}
 - Serious shortlist: {parcel.serious_shortlist}
 

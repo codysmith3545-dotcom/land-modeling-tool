@@ -36,6 +36,26 @@ Every top parcel gets a structured **evidence pack**: source-linked claims, sign
 
 Parcel-time snapshots feed an in-memory store (production: Postgres/Parquet). Backtests query `as_of` dates; no feature may post-date first public signal.
 
+## What v3 adds (master idea loop)
+
+Closes the gap between “where development goes” and “what to buy.” See [MASTER_IDEA.md](MASTER_IDEA.md).
+
+### 6. Development Atlas
+
+Retrospective layer: historical projects by category, county, acreage, and timeline (land control → first signal → announcement). Outputs `development_atlas.json` and project points on the map.
+
+### 7. Winner profiles
+
+Learn numeric fingerprints from atlas winner parcels (acreage, power tier, hiddenness, zoning). New candidates get a **profile_match** score — “does this look like land that already won?”
+
+### 8. Buy score + action tiers
+
+Unified **buy_score** combines composite prediction, acquisition attractiveness, profile match, hiddenness, and fatal-flaw clearance. Action tiers: `pursue_now` → `diligence` → `watch` → `pass`. Rankings sort by buy_score, not raw fit.
+
+### 9. Map + watchlist
+
+`map.html` (Leaflet) layers nodes, historical projects, and candidate parcels colored by buy action. `buy_watchlist.json` is the daily acquisition queue.
+
 ## Architecture
 
 ```
@@ -59,6 +79,9 @@ Sources → Temporal Store → Node Model → Parcel + Assemblage Model
 | `fatal_flaw_score` | Eight gates + explicit blockers |
 | `acquisition_attractiveness` | Basis, hiddenness, control, exit buyers |
 | `signal_boost` | Proprietary pre-market signals |
+| `profile_match` | Similarity to historical winner parcels |
+| `buy_score` | Action-oriented acquisition score |
+| `buy_action` | pursue_now / diligence / watch / pass |
 | `mispricing_signal` | Upside vs current basis |
 | `confidence_band` | High/low confidence separation |
 | `evidence_pack` | Source-linked thesis artifact |

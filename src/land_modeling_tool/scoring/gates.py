@@ -8,7 +8,9 @@ from land_modeling_tool.models.types import (
     Hiddenness,
     ParcelRecord,
 )
+from land_modeling_tool.atlas.patterns import WinnerProfile, profile_match_score
 from land_modeling_tool.config import investment_edge, scoring_weights
+from land_modeling_tool.scoring.buy_score import compute_buy_score
 from land_modeling_tool.scoring.parcels import entitlement_path_score, score_fit, score_power_readiness, score_water_fit
 from land_modeling_tool.scoring.signals import detect_signals, signal_boost
 
@@ -91,14 +93,24 @@ def score_acquisition(parcel: ParcelRecord, fit_peak: float) -> None:
     parcel.acquisition.exit_buyers = _exit_buyers(parcel)
 
 
-def score_parcel(parcel: ParcelRecord, node_score: float) -> ParcelRecord:
+def score_parcel(
+    parcel: ParcelRecord,
+    node_score: float,
+    winner_profiles: dict[str, WinnerProfile] | None = None,
+) -> ParcelRecord:
     score_power_readiness(parcel)
     score_water_fit(parcel)
     parcel.fit = score_fit(parcel)
     parcel.fatal = evaluate_fatal_flaws(parcel)
     priority_map = _category_priority_map()
     best_cat, fit_peak = parcel.fit.investment_category(priority_map)
+    parcel.investment_category = best_cat
     score_acquisition(parcel, fit_peak)
+
+    profile = None
+    if winner_profiles:
+        profile = winner_profiles.get(best_cat) or winner_profiles.get("all")
+    parcel.profile_match = profile_match_score(parcel, profile)
 
     entitlement = entitlement_path_score(parcel)
     weights = scoring_weights().get("composite", {})
@@ -114,11 +126,16 @@ def score_parcel(parcel: ParcelRecord, node_score: float) -> ParcelRecord:
         - weights.get("fatal_penalty", 0.20) * (1.0 - parcel.fatal.score)
     )
     parcel.composite_score = max(0.0, min(1.0, composite))
+    parcel.buy_score, parcel.buy_action = compute_buy_score(parcel, parcel.profile_match)
     parcel.confidence = _confidence(parcel, fit_peak)
-    parcel.serious_shortlist = parcel.fatal.passed_all and parcel.composite_score >= 0.55
+    parcel.serious_shortlist = (
+        parcel.fatal.passed_all and parcel.composite_score >= 0.55 and parcel.buy_action != "pass"
+    )
     signals = detect_signals(parcel)
     parcel.evidence = [
         f"Investment category: {best_cat} ({fit_peak:.2f})",
+        f"Buy score: {parcel.buy_score:.2f} → {parcel.buy_action}",
+        f"Winner profile match: {parcel.profile_match:.2f}",
         f"Node score: {node_score:.2f}",
         f"Power 100-300 MW readiness: {parcel.power.mw_100_300:.2f}",
         f"Water/sewer fit: {parcel.water.score:.2f}",

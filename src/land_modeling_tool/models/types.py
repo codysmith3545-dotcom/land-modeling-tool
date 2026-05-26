@@ -193,6 +193,10 @@ class ParcelRecord:
     confidence: ConfidenceBand = ConfidenceBand.MODERATE
     evidence: list[str] = field(default_factory=list)
     composite_score: float = 0.0
+    profile_match: float = 0.5
+    buy_score: float = 0.0
+    buy_action: str = "pass"
+    investment_category: str = ""
     serious_shortlist: bool = False
 
 
