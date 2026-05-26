@@ -15,9 +15,15 @@ land-model edge          # investment thesis + kill criteria
 land-model inventory     # prioritized data source registry
 land-model atlas         # where historical projects landed
 land-model rank -n 10    # score sample parcels (buy_score + action)
+land-model intake        # candidate count (sample + data/candidates/)
+land-model desk -n 10    # deal queue with next actions
 land-model map           # GeoJSON + interactive HTML map
 land-model run           # full pipeline → outputs/
 ```
+
+Add real parcels in `data/candidates/candidates.csv` — see [data/candidates/README.md](data/candidates/README.md).
+
+Official build plan: [docs/LAND_DESK_BUILD_PLAN.md](docs/LAND_DESK_BUILD_PLAN.md)
 
 Open `outputs/map.html` in a browser after `land-model run`.
 
@@ -36,6 +42,11 @@ Open `outputs/map.html` in a browser after `land-model run`.
 | `outputs/backtest_metrics.json` | Leakage-safe precision/recall |
 | `outputs/diligence_memos/*.md` | Top-10 developer-grade memos |
 | `outputs/ninety_day_proof.md` | 90-day proof summary |
+| `outputs/deal_queue.json` | Action-oriented queue (next action, kill test) |
+| `outputs/parcel_thesis_matrix.json` | Four-lane thesis view per parcel |
+| `outputs/deal_math.json` | Max basis, option premium, upside/downside |
+| `outputs/weekly_desk_report.md` | Weekly acquisition priorities |
+| `outputs/call_sheets/*.md` | Owner + utility call scripts for top queue |
 
 ## Scoring model
 
@@ -57,10 +68,13 @@ See [docs/PLAN.md](docs/PLAN.md) for the v2 strategy and [docs/MASTER_IDEA.md](d
 - `config/scoring_weights.yaml` — composite weights and category priority
 - `config/buy_score.yaml` — buy score weights and action tiers
 - `config/signals.yaml` — proprietary signal types and boosts
+- `config/desk.yaml` — thesis lanes, deal math, queue priorities
 
-## Sample data
+## Sample + candidate data
 
-`data/sample/` holds a small Indiana node/parcel/project set for local development and backtesting. Replace with live IGIO, Regrid, HIFLD, and county adapters for production.
+`data/sample/` holds a small Indiana node/parcel/project set for local development and backtesting.
+
+`data/candidates/` is where you hand-enter real opportunities (CSV or JSON) before live statewide ingestion.
 
 ## Architecture
 

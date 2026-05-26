@@ -9,6 +9,7 @@ from land_modeling_tool.atlas.development_atlas import (
     winner_profiles_for_scoring,
 )
 from land_modeling_tool.config import OUTPUT_DIR, investment_edge, prioritized_sources
+from land_modeling_tool.data.candidate_intake import intake_schema, load_all_parcels
 from land_modeling_tool.data.loaders import load_nodes, load_parcels
 from land_modeling_tool.data.registry import summarize_inventory
 from land_modeling_tool.pipeline import run_pipeline
@@ -48,6 +49,12 @@ def main(argv: list[str] | None = None) -> int:
         help="Output directory (default: outputs/)",
     )
 
+    intake = sub.add_parser("intake", help="Candidate intake schema and counts")
+    intake.add_argument("--schema", action="store_true", help="Print intake field schema")
+
+    desk = sub.add_parser("desk", help="Print deal queue from current parcel set")
+    desk.add_argument("-n", type=int, default=10, help="Queue rows to show")
+
     args = parser.parse_args(argv)
 
     if args.command == "edge":
@@ -71,7 +78,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "rank":
         nodes = rank_nodes(load_nodes())
         profiles = winner_profiles_for_scoring(load_parcels())
-        parcels = rank_parcels(load_parcels(), nodes, profiles)
+        parcels = rank_parcels(load_all_parcels(), nodes, profiles)
         print("parcel_id\tcounty\tbuy_score\taction\tcomposite\tcategory\tshortlist")
         for parcel in top_shortlist(parcels, limit=args.n):
             cat, fit = parcel.fit.best_category()
@@ -104,6 +111,30 @@ def main(argv: list[str] | None = None) -> int:
         write_geojson(out / "map.geojson", geojson)
         write_interactive_map(out / "map.html", geojson)
         print(json.dumps({"map": str(out / "map.html"), "geojson": str(out / "map.geojson")}, indent=2))
+        return 0
+
+    if args.command == "intake":
+        if args.schema:
+            print(json.dumps(intake_schema(), indent=2))
+        else:
+            parcels = load_all_parcels()
+            sample_count = len(load_parcels())
+            print(json.dumps({"total_parcels": len(parcels), "sample_parcels": sample_count}, indent=2))
+        return 0
+
+    if args.command == "desk":
+        from land_modeling_tool.desk.deal_queue import build_deal_queue
+
+        nodes = rank_nodes(load_nodes())
+        profiles = winner_profiles_for_scoring(load_all_parcels())
+        parcels = rank_parcels(load_all_parcels(), nodes, profiles)
+        queue = build_deal_queue(parcels, limit=args.n)
+        print("priority\tparcel_id\tcounty\tthesis\tnext_action\tbuy_score")
+        for item in queue:
+            print(
+                f"{item.priority}\t{item.parcel_id}\t{item.county}\t"
+                f"{item.primary_thesis}\t{item.next_action}\t{item.buy_score:.3f}"
+            )
         return 0
 
     parser.print_help()

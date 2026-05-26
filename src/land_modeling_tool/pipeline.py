@@ -8,7 +8,14 @@ from pathlib import Path
 from land_modeling_tool.atlas.development_atlas import build_development_atlas, winner_profiles_for_scoring
 from land_modeling_tool.backtest.labels import build_snapshots, run_backtest
 from land_modeling_tool.config import OUTPUT_DIR, investment_edge, prioritized_sources
-from land_modeling_tool.data.loaders import load_hard_negatives, load_nodes, load_parcels, load_projects
+from land_modeling_tool.data.candidate_intake import load_all_parcels
+from land_modeling_tool.data.loaders import load_hard_negatives, load_nodes, load_projects
+from land_modeling_tool.desk.call_sheets import build_call_sheets
+from land_modeling_tool.desk.deal_math import compute_all_deal_math
+from land_modeling_tool.desk.deal_queue import build_deal_queue
+from land_modeling_tool.desk.feedback import rejection_summary
+from land_modeling_tool.desk.thesis_matrix import build_all_thesis_matrices
+from land_modeling_tool.desk.weekly_report import build_weekly_desk_report
 from land_modeling_tool.export.geojson import build_geojson, write_geojson
 from land_modeling_tool.export.map_html import write_interactive_map
 from land_modeling_tool.proof.diligence_memo import render_memo
@@ -26,7 +33,7 @@ def run_pipeline(output_dir: Path | None = None) -> dict:
     out.mkdir(parents=True, exist_ok=True)
 
     edge = investment_edge()
-    raw_parcels = load_parcels()
+    raw_parcels = load_all_parcels()
     atlas = build_development_atlas(raw_parcels)
     profiles = winner_profiles_for_scoring(raw_parcels)
 
@@ -94,17 +101,41 @@ def run_pipeline(output_dir: Path | None = None) -> dict:
         encoding="utf-8",
     )
 
+    thesis = build_all_thesis_matrices(parcels)
+    queue = build_deal_queue(parcels)
+    deal_math = compute_all_deal_math(parcels)
+    call_sheets = build_call_sheets([p for p in parcels if p.parcel_id in {q.parcel_id for q in queue[:10]}])
+
+    _write_json(out / "parcel_thesis_matrix.json", [m.to_dict() for m in thesis])
+    _write_json(out / "deal_queue.json", [q.to_dict() for q in queue])
+    _write_json(out / "deal_math.json", [d.to_dict() for d in deal_math])
+    _write_json(out / "expert_rejection_summary.json", rejection_summary())
+
+    sheets_dir = out / "call_sheets"
+    sheets_dir.mkdir(exist_ok=True)
+    for parcel_id, sheets in call_sheets.items():
+        (sheets_dir / f"{parcel_id}_owner.md").write_text(sheets["owner"], encoding="utf-8")
+        (sheets_dir / f"{parcel_id}_utility.md").write_text(sheets["utility"], encoding="utf-8")
+
+    (out / "weekly_desk_report.md").write_text(
+        build_weekly_desk_report(parcels, nodes),
+        encoding="utf-8",
+    )
+
     return {
         "output_dir": str(out),
         "nodes": len(nodes),
         "parcels": len(parcels),
+        "candidates_merged": len(raw_parcels),
         "assemblages": len(assemblages),
         "shortlist": len(shortlist),
         "buy_watchlist": len(buy_now),
+        "deal_queue": len(queue),
         "historical_projects": atlas.project_count,
         "precision_at_50": metrics.precision_at_50,
         "recall_at_100": metrics.recall_at_100,
         "map": str(out / "map.html"),
+        "weekly_desk_report": str(out / "weekly_desk_report.md"),
     }
 
 

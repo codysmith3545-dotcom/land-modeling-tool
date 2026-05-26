@@ -1,0 +1,38 @@
+# Deal desk configuration — Phase 1
+
+thesis_lanes:
+  power_led:
+    label: "Power-led (data center / power-heavy industrial)"
+    categories: [data_center, power_heavy_industrial]
+  logistics_industrial:
+    label: "Logistics / industrial"
+    categories: [logistics, manufacturing]
+  energy:
+    label: "Energy (BESS / solar / grid-adjacent)"
+    categories: [bess_solar_energy]
+  cheap_optionality:
+    label: "Cheap optionality (multi-exit)"
+    min_lane_score: 0.45
+
+deal_math:
+  upside_multipliers:
+    data_center: 4.5
+    power_heavy_industrial: 3.5
+    logistics: 2.5
+    manufacturing: 2.2
+    bess_solar_energy: 2.8
+    residential_growth: 1.8
+  max_option_premium_pct_of_upside: 0.08
+  outright_basis_pct_of_upside: 0.35
+
+queue:
+  power_mw_threshold_for_utility_call: 0.55
+  prioritize_actions:
+    - call_utility
+    - check_zoning
+    - verify_sewer
+    - call_owner
+    - add_comps
+    - check_title
+    - watch_only
+    - reject

@@ -2,6 +2,8 @@
 
 Living strategy doc for the land-modeling-tool repo. This extends the original plan with execution layers that create durable edge.
 
+For the consolidated next-build plan, use [LAND_DESK_BUILD_PLAN.md](LAND_DESK_BUILD_PLAN.md). It includes the full land acquisition operating system vision, expert-review additions, feature set, and phased build order.
+
 ## Core thesis (unchanged)
 
 Build an **infrastructure-option desk**, not a development heat map. Wealth comes from controlling mispriced land at scarce nodes **before** power, water, entitlement, and buyer signals price it in.
